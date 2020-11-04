@@ -4,8 +4,6 @@
 %
 % PREREQUISITES:
 %   - have COBRA toolbox installed and initialized (run initCobraToolbox)
-%   - make sure the files iCre1355_{auto|mixo|hetero}.xml as well as 
-%     transcript_gene_map.mat are in your current folder
 %
 % Output description:
 %
@@ -20,14 +18,12 @@
 % delRxns       List of deleted reactions for each gene KO
 % fluxSolution  FBA/MOMA/lMOMA fluxes for KO strains
 
-%
-
 changeCobraSolver()
 
-model_auto   = readCbModel('models/iCre1355_auto.xml');
-model_mixo   = readCbModel('models/iCre1355_mixo.xml');
-model_hetero = readCbModel('models/iCre1355_hetero.xml');
-load transcript_gene_map
+model_auto   = readCbModel('../data/models/iCre1355_auto.xml');
+model_mixo   = readCbModel('../data/models/iCre1355_mixo.xml');
+model_hetero = readCbModel('../data/models/iCre1355_hetero.xml');
+load ../data/transcript_gene_map
 
 model_auto.c(2392) = 1;
 model_mixo.c(2393) = 1;
