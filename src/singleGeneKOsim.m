@@ -29,6 +29,7 @@ model_auto.c(2392) = 1;
 model_mixo.c(2393) = 1;
 model_hetero.c(2394) = 1;
 
+
 % process list of KO candidate genes via transcript_gene_map
 tmp = unique(transcript_gene_map(2:end,2));
 geneKOlist = cell(length(tmp),1);
