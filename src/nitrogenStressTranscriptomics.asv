@@ -1,0 +1,56 @@
+% Evaluate & visualize the effects of nitrogen starvation on the metabolic
+% pathways in iCre1355 under autotrophic conditions. Constraints are
+% applied with experimentally derived RNA-seq data from https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3346115/
+
+% Load in data
+model = readCbModel('../data/models/iCre1355_auto.xml');
+load ../data/transcript_gene_map;
+expression_table = readtable('expression_data.xlsx');
+
+% Set the objective to TAG demand and biomass
+model = changeObjective(model, {'DM_tag_c', 'Biomass_Chlamy_auto'});
+
+% Map the expression data to the transcript names in iCre1355
+% TODO this only reads in the 0 min col, we should read in all of them so
+% we can compare
+tmp = expression_table.Au10_2(2:end-1);
+transcript = cell(length(tmp),1);
+for i=1:length(tmp)
+    transcript{i} = transcript_gene_map(...
+        strcmp(tmp(i,1),transcript_gene_map(:,2)),1);
+end
+
+% Create a table so that we can deal with duplicate transcripts without
+% messing with paired arrays
+expression_value = expression_table.Var6(2:end-1);
+tmp_table = table(transcript, expression_value);
+transcript_table = table([],'VariableNames',{'transcript', 'value'})
+% Iterate through every row of the table
+for i=1:height(tmp_table)
+    % check the number of transcripts in this row
+    transcripts = tmp_table.transcript{i};
+    if ~isempty(transcripts)
+        T = table;
+        T.transcript = transcripts;
+        T.expression_value(:) = tmp_table.expression_value(
+    end
+end
+
+% Expand out any duplicate transcripts
+while any(cellfun(@iscell, tmp_table.transcript))
+    % Find the next cell, which holds duplicate transcripts
+    idx = cellfun(@iscell, tmp_table.transcript);
+    % Create a new table and populate it with the contents of the duplicate
+    % transcript and their values
+    T2 = table;
+    T2.transcript = tmp_table.transcript{idx}.';
+    T2.expression_value(:) = {tmp_table.expression_value{idx}};
+    % delete the table row with the cell
+    tmp_table(idx, :) = [];
+    % concat the tables back together, inserting the new transcripts
+    tmp_table = [tmp_table;T2];
+end
+
+% clear tmp;
+% {'Cre01.g037850'}
+
