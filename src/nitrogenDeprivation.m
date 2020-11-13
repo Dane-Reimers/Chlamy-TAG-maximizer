@@ -18,19 +18,10 @@
 % delRxns       List of deleted reactions for each gene KO
 % fluxSolution  FBA/MOMA/lMOMA fluxes for KO strains
 changeCobraSolver();
-model_mixo = readCbModel('../data/models/iCre1355_auto.xml');
+model_mixo = readCbModel('../data/models/iCre1355_mixo.xml');
 load ../data/transcript_gene_map
 
-model_mixo = changeObjective(model_mixo, "DM_tag_c", 1);
-
-model_mixo = changeRxnBounds(model_mixo, "EX_nh4_e", -0.1, "l");
-%model_mixo = changeRxnBounds(model_mixo, "EX_nh4_e", -0.1, "u");
-
-model_mixo = changeRxnBounds(model_mixo, "EX_no3_e", -0.1, "l");
-%model_mixo = changeRxnBounds(model_mixo, "EX_no3_e", 0.000000000003129, "u");
-
-model_mixo = changeRxnBounds(model_mixo, "EX_no2_e", -0.1, "l");
-%model_mixo = changeRxnBounds(model_mixo, "EX_nh4_e", 0.00000000000723, "u");
+model_mixo = changeObjective(model_mixo, "Biomass_Chlamy_mixo", 1);
 
 printConstraints(model_mixo, -1000, 1000)
 
@@ -58,7 +49,7 @@ for i=1:length(geneKOlist)
     end
 end
 
-[grRatioDble, grRateKO, grRateWT] = doubleGeneDeletion(model_mixo, 'FBA', newGeneKOlist);
+[grRatioDble, grRateKO, grRateWT] = doubleGeneDeletion(model_mixo, 'FBA', newGeneKOlist(1:100));
 for i = 1:length(grRatioDble)
     if grRatioDble(i) > 1.000001
         disp(grRatioDble(i));
